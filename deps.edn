@@ -1,0 +1,45 @@
+{:paths ["src" "resources" "dev" "examples" "test"]
+
+ :deps
+ {kixi/stats {:mvn/version "0.5.5"}
+  org.apache.commons/commons-math3 {:mvn/version "3.6.1"}
+  org.clojure/clojure {:mvn/version "1.11.1"}
+  org.mentat/clerk-utils {:mvn/version "0.6.0"}
+  io.github.nextjournal/cas-client
+  {:git/sha "84ab35c3321c1e51a589fddbeee058aecd055bf8"}
+  io.github.nextjournal/clerk
+  {:git/sha "d80187013d7b7b96db3d8b114b8d99f687170668"}
+
+  io.github.nextjournal/clerk.render
+  {:git/url "https://github.com/nextjournal/clerk"
+   :git/sha "d80187013d7b7b96db3d8b114b8d99f687170668"
+   :deps/root "render"}
+
+  ;; test deps
+  com.gfredericks/test.chuck {:mvn/version "0.2.14"}
+  org.babashka/sci {:mvn/version "0.8.40"}
+  org.clojure/test.check {:mvn/version "1.1.1"}
+  same/ish {:mvn/version "0.1.6"}}
+
+ :aliases
+ {;; See https://github.com/cognitect-labs/test-runner for invocation
+  ;; instructions, or call `clojure -X:test:runner`.
+  :runner
+  {:extra-deps
+   {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+   :main-opts ["-m" "cognitect.test-runner"]
+   :exec-fn cognitect.test-runner.api/test
+   :exec-args ["test"]}
+
+  :coverage
+  ;; Invoke with clj -M:test:coverage <args>
+  {:main-opts ["-m" "cloverage.coverage"
+               "-p" "src"
+               "-s" "test"]
+   :extra-deps {cloverage/cloverage {:mvn/version "1.2.4"}}}
+
+  :build
+  {:deps
+   {io.github.clojure/tools.build {:git/tag "v0.9.4" :git/sha "76b78fe"}
+    slipset/deps-deploy {:mvn/version "0.2.0"}}
+   :ns-default build}}}

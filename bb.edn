@@ -1,0 +1,33 @@
+{:deps {org.babashka/http-server {:mvn/version "0.1.11"}
+        org.babashka/cli {:mvn/version "0.2.23"}
+        io.github.clj-kondo/clj-kondo-bb
+        {:git/tag "v2023.01.20" :git/sha "adfc7df"}}
+ :tasks
+ {:requires ([babashka.cli :as cli])
+  :init
+  (do (def cli-opts
+        (cli/parse-opts *command-line-args* {:coerce {:port :int}}))
+
+      (defn X [cmd]
+        (let [args *command-line-args*]
+          (if (even? (count args))
+            (apply shell cmd args)
+            (do (println "Please supply an even number of arguments!")
+                (System/exit 1))))))
+
+  test:clj
+  {:doc "Run CLJ tests."
+   :task (shell "clojure -X:runner")}
+
+  lint-deps
+  {:requires ([clj-kondo.core :as kondo])
+   :doc "Lint dependencies."
+   :task (kondo/run!
+          {:lint [(with-out-str
+                    (babashka.tasks/clojure "-Spath -A:nextjournal/clerk"))]
+           :dependencies true})}
+
+  lint
+  {:doc "Lint source-containing directories with clj-kondo."
+   :task (exec 'clj-kondo.core/exec)
+   :exec-args {:lint ["src" "dev" "test" "examples"]}}}}
